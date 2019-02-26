@@ -7,9 +7,15 @@ import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
 import { Input, TextArea, FormBtn } from "../components/Form";
 
+//Redux dependencies
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as actionCreators from '../redux/actions/actionCreators';
+
+import './Books.css'
+
 class Books extends Component {
   state = {
-    books: [],
     title: "",
     author: "",
     synopsis: ""
@@ -21,8 +27,23 @@ class Books extends Component {
 
   loadBooks = () => {
     API.getBooks()
-      .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
+      .then(res => {
+        const newBooks = res.data.map(book => {
+          if (this.props.books.length) {
+            book.likes = (this.props.book.find(search => search._id === book._id)) ? this.props.book.find(search => search._id === book._id).likes : 0;
+          } else {
+            book.likes = 0;
+          }
+          return book;
+        });
+        this.props.loadBooks(newBooks);
+        this.setState({
+          title: "",
+          author: "",
+          synopsis: ""
+        });
+      }
+        //this.setState({ books: res.data, title: "", author: "", synopsis: "" })
       )
       .catch(err => console.log(err));
   };
@@ -52,6 +73,13 @@ class Books extends Component {
         .catch(err => console.log(err));
     }
   };
+
+  handleLikeClick = (id) => {
+    console.log('id', id);
+    const books = this.state.books;
+    const likedBook = books.find(book => book._id === id);
+    likedBook.likes = likedBook.likes + 1
+  }
 
   render() {
     return (
@@ -92,10 +120,14 @@ class Books extends Component {
             <Jumbotron>
               <h1>Books On My List</h1>
             </Jumbotron>
-            {this.state.books.length ? (
+            {this.props.books.length ? (
               <List>
-                {this.state.books.map(book => (
+                {this.props.books.map(book => (
                   <ListItem key={book._id}>
+                    <button className="like-btn btn-info" onClick={() => this.props.increment(book._id)}>
+                    <i className="fas fa-thumbs-up"></i>
+                    <span className="like-count">{book.likes || 0}</span>
+                    </button>
                     <Link to={"/books/" + book._id}>
                       <strong>
                         {book.title} by {book.author}
@@ -115,4 +147,14 @@ class Books extends Component {
   }
 }
 
-export default Books;
+const mapStateToProps = state => {
+  return {
+    books: state.books
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(actionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Books);
