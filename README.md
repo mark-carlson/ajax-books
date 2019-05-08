@@ -4,11 +4,11 @@ This repo contains the same code in different branches to  demonstrate various s
 
 To install:
 
-    `npm install`
+    npm install
 
 Seed the database with:
 
-    `npm run seed`
+    npm run seed
 
 The `redux` branch uses react-redux to manage global state to enable the display of total number of likes in the nav bar and individual book number of likes in the book's detail page.
 
