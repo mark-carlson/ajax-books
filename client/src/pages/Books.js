@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
 import { Input, TextArea, FormBtn } from "../components/Form";
+import './Books.css';
+
+import Consumer from '../context/configContext';
 
 class Books extends Component {
   state = {
@@ -55,7 +58,11 @@ class Books extends Component {
 
   render() {
     return (
-      <Container fluid>
+    <Consumer>
+      {(context) => {
+        const {books} = context.library || [];
+        return (
+          <Container fluid>
         <Row>
           <Col size="md-6">
             <Jumbotron>
@@ -67,23 +74,23 @@ class Books extends Component {
                 onChange={this.handleInputChange}
                 name="title"
                 placeholder="Title (required)"
-              />
+                />
               <Input
                 value={this.state.author}
                 onChange={this.handleInputChange}
                 name="author"
                 placeholder="Author (required)"
-              />
+                />
               <TextArea
                 value={this.state.synopsis}
                 onChange={this.handleInputChange}
                 name="synopsis"
                 placeholder="Synopsis (Optional)"
-              />
+                />
               <FormBtn
                 disabled={!(this.state.author && this.state.title)}
                 onClick={this.handleFormSubmit}
-              >
+                >
                 Submit Book
               </FormBtn>
             </form>
@@ -96,6 +103,10 @@ class Books extends Component {
               <List>
                 {this.state.books.map(book => (
                   <ListItem key={book._id}>
+                  <button className="like" onClick={() => context.library.incrementLikes(book._id)}>
+                  <i className="fas fa-thumbs-up"></i>
+                  <span className="like-count">{books.find(search => search.id === book._id) ? books.find(search => search.id === book._id).likes : 0}</span>
+                  </button>
                     <Link to={"/books/" + book._id}>
                       <strong>
                         {book.title} by {book.author}
@@ -107,10 +118,13 @@ class Books extends Component {
               </List>
             ) : (
               <h3>No Results to Display</h3>
-            )}
+              )}
           </Col>
         </Row>
       </Container>
+        )}
+        };
+    </Consumer>
     );
   }
 }

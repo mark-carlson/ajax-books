@@ -4,9 +4,11 @@ import Books from "./pages/Books";
 import Detail from "./pages/Detail";
 import NoMatch from "./pages/NoMatch";
 import Nav from "./components/Nav";
+import {ConfigProvider} from './context/configContext';
 
 function App() {
   return (
+    <ConfigProvider>
     <Router>
       <div>
         <Nav />
@@ -18,6 +20,7 @@ function App() {
         </Switch>
       </div>
     </Router>
+    </ConfigProvider>
   );
 }
 
