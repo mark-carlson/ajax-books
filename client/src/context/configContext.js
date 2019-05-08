@@ -5,36 +5,37 @@ const { Provider, Consumer } = createContext();
 // Provider will be exported wrapped in ConfigProvider component.
 class ConfigProvider extends Component {
     state = {
-        library: {
-            books: [],
-            incrementLikes: (id) => {
-                const book = (this.state.library.books.find(search => search.id === id)) ? this.state.library.books.findIndex(search => search.id === id) : null;
-                if (book === null) {
-                    const {books} = this.state.library;
-                    books.push({
+        books: [],
+        incrementLikes: (id) => {
+            const book = (this.state.books.find(search => search.id === id)) ? this.state.books.findIndex(search => search.id === id) : null;
+            if (book === null) {
+                const {books} = this.state;
+                books.push({
+                    id,
+                    likes: 1
+                });
+                this.setState({
+                    books
+                });
+            } else {
+                const newState = [
+                    ...this.state.books.slice(0, book),
+                    {
                         id,
-                        likes: 1
-                    });
-                    this.setState({
-                        books
-                    });
-                } else {
-                    const newState = [
-                        ...this.state.library.books.slice(0, book),
-                        {
-                            id,
-                            likes: this.state.library.books[book].likes + 1
-                        },
-                        ...this.state.library.books.slice(book + 1)
-                    ];
-                    this.setState({
-                        library: {
-                            ...this.state.library,
-                            books: newState
-                        }
-                    });
-                }
+                        likes: this.state.books[book].likes + 1
+                    },
+                    ...this.state.books.slice(book + 1)
+                ];
+                this.setState({
+                    books: newState
+                });
             }
+        },
+        deleteBook: id => {
+            const newState = this.state.books.filter(search => search.id !== id);
+            this.setState({
+                books: newState
+            });
         }
     };
 
@@ -42,7 +43,7 @@ class ConfigProvider extends Component {
         return (
             <Provider
                 value={{
-                    library: this.state.library
+                    library: this.state
                 }}
             >
                 {this.props.children}

@@ -113,7 +113,10 @@ class Books extends Component {
                             {book.title} by {book.author}
                           </strong>
                         </Link>
-                        <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                        <DeleteBtn onClick={() => {
+                          this.deleteBook(book._id);
+                          context.library.deleteBook(book._id);
+                          }} />
                       </ListItem>
                     ))}
                   </List>
