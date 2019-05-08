@@ -30,7 +30,7 @@ class Books extends Component {
       .then(res => {
         const newBooks = res.data.map(book => {
           if (this.props.books.length) {
-            book.likes = (this.props.book.find(search => search._id === book._id)) ? this.props.book.find(search => search._id === book._id).likes : 0;
+            book.likes = (this.props.books.find(search => search._id === book._id)) ? this.props.books.find(search => search._id === book._id).likes : 0;
           } else {
             book.likes = 0;
           }
